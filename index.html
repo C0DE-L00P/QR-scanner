@@ -83,14 +83,16 @@
             try {
                 // Store scanner reference when first scan happens
                 if (!scanner) {
-                    scanner = html5QrcodeScanner.getHtml5QrcodeScanner();
+                    scanner = html5QrcodeScanner.html5Qrcode;
                 }
                 // Pause scanning
-                await scanner.pause();
+                await scanner.pause(true);
                 await handleScan(decodedText);
-                // Resume scanning after alert is closed
-                scanner.resume();
+            } catch (error) {
+                console.error(error);
             } finally {
+                // Resume scanning after everything is done
+                scanner.resume();
                 isProcessing = false;
             }
         }, (error) => {
