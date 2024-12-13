@@ -9,7 +9,8 @@
     
     <script>
         let scanner = new Instascan.Scanner({ 
-            video: document.getElementById('preview')
+            video: document.getElementById('preview'),
+            reverse: true
         });
 
         scanner.addListener('scan', function(content) {
@@ -20,7 +21,7 @@
             if (cameras.length > 0) {
                 // Use the back camera (usually cameras[1])
                 const backCamera = cameras[cameras.length - 1];
-                scanner.start(backCamera);
+                scanner.start(backCamera || cameras[0]);
             } else {
                 alert('No cameras found');
             }
