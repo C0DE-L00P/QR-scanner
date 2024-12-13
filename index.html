@@ -75,11 +75,21 @@
         );
 
         let isProcessing = false;
+        let scanner = null;
+
         html5QrcodeScanner.render(async (decodedText, decodedResult) => {
             if (isProcessing) return;
             isProcessing = true;
             try {
+                // Store scanner reference when first scan happens
+                if (!scanner) {
+                    scanner = html5QrcodeScanner.getHtml5QrcodeScanner();
+                }
+                // Pause scanning
+                await scanner.pause();
                 await handleScan(decodedText);
+                // Resume scanning after alert is closed
+                scanner.resume();
             } finally {
                 isProcessing = false;
             }
