@@ -97,23 +97,36 @@
             // Remove any whitespace that might interfere
             content = content.trim();
             
-            const URL = 'https://ajangs.go-game.tech/'+content;
+            const URL = 'https://script.google.com/macros/s/AKfycbzMzk0lqnMsgvyQKDo8TcfAQe0hBR8l5OuKqTdauwC4RG4k6rbPN2dBZIBr_7AOgvHu/exec?search='+content;
 
             try {
-                
                 if(content.length !== 4) {
                     console.log("Invalid QR code length:", content.length);
                     throw new Error("Invalid QR code length");
                 }
 
-                const res = await fetch(URL);
+                const res = await fetch(URL, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                
                 const data = await res.json();
 
                 const msgShown = `${content} - ${data.message} \n ${data.status == 'success' ? `Ticket Type: ${data.data[1]}` : ''}`;
                 alert(msgShown);
             } catch (error) {
                 console.error("Scan processing error:", error);
-                alert("Error processing QR code. Please try again. "+ error);
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    alert("Network error! Please check your internet connection. " + error.message);
+                } else {
+                    alert("Error processing QR code. Please try again. " + error.message);
+                }
             }
         }
     </script>
