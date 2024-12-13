@@ -11,9 +11,21 @@ function doGet(e) {
   // Search for row with the search value in first column
   for (let i = 0; i < data.length; i++) {
     if (data[i][0] === searchValue) {
-      // Get all values from the row
+      // Check if already marked as present
+      if (data[i][2] === true) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "error", 
+          message: "Already Checked",
+          code: 401
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      // Update third column to TRUE
+      sheet.getRange(i + 1, 3).setValue(true);
+      
       result = {
         status: "success",
+        message: "Valid",
         data: data[i],
         rowNumber: i + 1
       };
@@ -25,8 +37,8 @@ function doGet(e) {
   // Return JSON response with 404 if not found
   if (!found) {
     return ContentService.createTextOutput(JSON.stringify({
+      message: "Invalid or Fake",
       status: "error",
-      error: "No match found",
       code: 404
     })).setMimeType(ContentService.MimeType.JSON);
   }
@@ -53,7 +65,7 @@ function doPost(e) {
         if (data[i][2] === true) {
           return ContentService.createTextOutput(JSON.stringify({
             status: "error",
-            error: "Already checked",
+            message: "Already Checked",
             code: 401
           })).setMimeType(ContentService.MimeType.JSON);
         }
@@ -63,7 +75,7 @@ function doPost(e) {
         
         result = {
           status: "success",
-          message: "Valid QR Code",
+          message: "Valid",
           data: data[i],
           rowNumber: i + 1
         };
@@ -75,7 +87,7 @@ function doPost(e) {
     // Return JSON response with 404 if not found
     if (!found) {
       return ContentService.createTextOutput(JSON.stringify({
-        error: "Fake QR Code",
+        message: "Invalid or Fake",
         status: "error",
         code: 404
       })).setMimeType(ContentService.MimeType.JSON);
