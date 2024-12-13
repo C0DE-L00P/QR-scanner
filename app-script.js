@@ -14,10 +14,11 @@ function doGet(e) {
       // Check if already marked as present
       if (data[i][2] === true) {
         return ContentService.createTextOutput(JSON.stringify({
-          status: "error", 
+          status: "success",
           message: "Already Checked",
-          code: 401
-        })).setMimeType(ContentService.MimeType.JSON);
+          data: data[i]
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
       }
       
       // Update third column to TRUE
@@ -40,7 +41,8 @@ function doGet(e) {
       message: "Invalid or Fake",
       status: "error",
       code: 404
-    })).setMimeType(ContentService.MimeType.JSON);
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
   }
 
   return ContentService.createTextOutput(JSON.stringify(result))
@@ -67,7 +69,8 @@ function doPost(e) {
             status: "error",
             message: "Already Checked",
             code: 401
-          })).setMimeType(ContentService.MimeType.JSON);
+          }))
+          .setMimeType(ContentService.MimeType.JSON);
         }
         
         // Update third column to TRUE
@@ -84,13 +87,15 @@ function doPost(e) {
       }
     }
   
+
     // Return JSON response with 404 if not found
     if (!found) {
       return ContentService.createTextOutput(JSON.stringify({
         message: "Invalid or Fake",
         status: "error",
         code: 404
-      })).setMimeType(ContentService.MimeType.JSON);
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
     }
   
     return ContentService.createTextOutput(JSON.stringify(result))
