@@ -6,17 +6,19 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 <body>
-    <video id="preview" style="width: 100%; height: 100%;"></video>
-
+    <!-- Removed unused video element since we're using html5-qrcode -->
+    
     <div id="result">
         <h5 id="status"></h5>
         <p id="message"></p>
         <p id="data"></p>
     </div>
     
+    <div id="reader"></div>
+
     <script>
         const html5QrcodeScanner = new Html5QrcodeScanner(
-            "preview", 
+            "reader", // Changed from "preview" to "reader" to match the div id
             { 
                 fps: 10,
                 qrbox: {width: 250, height: 250},
@@ -29,7 +31,6 @@
         }, (error) => {
             console.error(error);
         });
-
 
         async function handleScan(content) {
             alert(content);
