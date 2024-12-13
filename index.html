@@ -59,8 +59,9 @@
 </head>
 
 <body>
-    
-    <div id="reader"></div>
+    <div id="reader">
+        <button id="torch-button" style="display: none;">Toggle Flash</button>
+    </div>
 
     <script>
         const html5QrcodeScanner = new Html5QrcodeScanner(
@@ -70,23 +71,42 @@
                 qrbox: {width: 320, height: 320},
                 aspectRatio: 1.0,
                 disableFlip: true,
-                showLandmarker: true
+                showLandmarker: true,
+                facingMode: "environment"
             }
         );
 
         let isProcessing = false;
         let scanner = null;
+        let torchOn = false;
+
+        // Create flash button
+        const flashButton = document.createElement('button');
+        flashButton.innerText = 'Toggle Flash';
+        flashButton.onclick = async () => {
+            if (!scanner) return;
+            try {
+                torchOn = !torchOn;
+                await scanner.toggleFlash(torchOn);
+                flashButton.innerText = torchOn ? 'Turn Off Flash' : 'Turn On Flash';
+            } catch (err) {
+                console.error('Flash not supported:', err);
+            }
+        };
+        document.getElementById('reader').appendChild(flashButton);
 
         html5QrcodeScanner.render(async (decodedText, decodedResult) => {
             if (isProcessing) return;
             isProcessing = true;
+            
+            // Pause scanning
+            scanner.pause(true);
+
             try {
                 // Store scanner reference when first scan happens
                 if (!scanner) {
                     scanner = html5QrcodeScanner.html5Qrcode;
                 }
-                // Pause scanning
-                await scanner.pause(true);
                 await handleScan(decodedText);
             } catch (error) {
                 console.error(error);
