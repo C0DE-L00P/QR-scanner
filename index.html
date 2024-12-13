@@ -114,30 +114,11 @@
             const URL = 'https://script.google.com/macros/s/AKfycby3Fx7beOdV_mPs6FW44P2cxOaQ58X4V2-7NUQXXSIQcBXOWpIpkaTL42HLIPWV8FH_/exec?search='+content;
 
             try {
-                // Add a debounce to prevent multiple rapid requests
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
                 let res = await fetch(URL)
                 res = await res.json();
 
                 const msgShown = `${content} - ${res.message + (res.message !== 'valid' ? '!!' : '')} \n${res.status == 'success' ? `Ticket Type: ${res.data[1]}` : ''}`;
-                
-                // Clear any existing alerts before showing new one
-                while (document.querySelector('.alert')) {
-                    document.querySelector('.alert').remove();
-                }
-                
-                // Use a custom alert div instead of native alert
-                const alertDiv = document.createElement('div');
-                alertDiv.className = 'alert';
-                alertDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid black; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000;';
-                alertDiv.textContent = msgShown;
-                document.body.appendChild(alertDiv);
-                
-                // Remove alert after 3 seconds
-                setTimeout(() => {
-                    alertDiv.remove();
-                }, 3000);
+                confirm(msgShown); // Using alert since it only has OK button, while confirm has OK and Cancel
             } catch (error) {
                 console.error(error);
             }
