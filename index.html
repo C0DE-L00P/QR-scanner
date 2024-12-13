@@ -27,6 +27,13 @@
                 max-width: 100%;
                 padding: 10px;
             }
+            #reader button {
+                padding: 15px 30px;
+                font-size: 18px;
+                margin: 8px 4px;
+                width: 80%;
+                max-width: 300px;
+            }
         }
         #reader button {
             background-color: #4CAF50;
@@ -48,7 +55,6 @@
             border: 1px solid #ddd;
         }
     </style>
-    </style>
 </head>
 
 <body>    
@@ -64,7 +70,7 @@
             "reader",
             { 
                 fps: 10,
-                qrbox: {width: 250, height: 250}, // Reduced size to improve scanning
+                qrbox: {width: 340, height: 340}, // Reduced size to improve scanning
                 aspectRatio: 1.0,
                 disableFlip: false, // Enable flipping to handle mirrored QR codes
                 formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ] // Explicitly support QR codes
@@ -91,25 +97,23 @@
             // Remove any whitespace that might interfere
             content = content.trim();
             
-            if(content.length !== 4) {
-                console.log("Invalid QR code length:", content.length);
-                return;
-            }
-            
             const URL = 'https://ajangs.go-game.tech/'+content;
 
             try {
-                const res = await fetch(URL);
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
+                
+                if(content.length !== 4) {
+                    console.log("Invalid QR code length:", content.length);
+                    throw new Error("Invalid QR code length");
                 }
+
+                const res = await fetch(URL);
                 const data = await res.json();
 
                 const msgShown = `${content} - ${data.message} \n ${data.status == 'success' ? `Ticket Type: ${data.data[1]}` : ''}`;
                 alert(msgShown);
             } catch (error) {
                 console.error("Scan processing error:", error);
-                alert("Error processing QR code. Please try again.");
+                alert("Error processing QR code. Please try again. "+ error);
             }
         }
     </script>
