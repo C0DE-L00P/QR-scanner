@@ -63,7 +63,7 @@ function doPost(e) {
         
         result = {
           status: "success",
-          message: "Updated successfully",
+          message: "Valid QR Code",
           data: data[i],
           rowNumber: i + 1
         };

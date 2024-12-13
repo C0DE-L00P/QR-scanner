@@ -18,6 +18,17 @@
             width: 100%;
             max-width: 600px;
             margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        @media screen and (max-width: 768px) {
+            #reader {
+                max-width: 100%;
+                padding: 10px;
+            }
         }
         #reader button {
             background-color: #4CAF50;
@@ -44,7 +55,7 @@
 
     <script>
         const html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", // Changed from "preview" to "reader" to match the div id
+            "reader",
             { 
                 fps: 10,
                 qrbox: {width: 320, height: 320},
@@ -53,8 +64,15 @@
             }
         );
 
-        html5QrcodeScanner.render((decodedText, decodedResult) => {
-            handleScan(decodedText);
+        let isProcessing = false;
+        html5QrcodeScanner.render(async (decodedText, decodedResult) => {
+            if (isProcessing) return;
+            isProcessing = true;
+            try {
+                await handleScan(decodedText);
+            } finally {
+                isProcessing = false;
+            }
         }, (error) => {
             console.error(error);
         });
@@ -73,12 +91,8 @@
                 })
                 res = await res.json();
 
-                const msgShown = `${content} - ${res.message} \n ${res.status == 'success' ? JSON.stringify(res.data) : ''}`;
+                const msgShown = `${content} - ${res.status == 'success' ? res.message : res.error} \n ${res.status == 'success' ? JSON.stringify(res.data) : ''}`;
                 alert(msgShown);
-
-                document.getElementById('status').innerText = res.status;
-                document.getElementById('message').innerText = res.message;
-                document.getElementById('data').innerText = JSON.stringify(res.data);
             } catch (error) {
                 console.error(error);
             }
