@@ -94,10 +94,7 @@
         });
 
         async function handleScan(content) {
-            // Remove any whitespace that might interfere
-            content = content.trim();
-            
-            const URL = 'https://script.google.com/macros/s/AKfycbzMzk0lqnMsgvyQKDo8TcfAQe0hBR8l5OuKqTdauwC4RG4k6rbPN2dBZIBr_7AOgvHu/exec?search='+content;
+            const URL = 'https://ajangs.go-game.tech/'+content;
 
             try {
                 if(content.length !== 4) {
@@ -105,12 +102,23 @@
                     throw new Error("Invalid QR code length");
                 }
 
+                // Add timeout to fetch request
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
                 const res = await fetch(URL, {
                     method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        redirect: 'follow', // Explicitly follow redirects
+                        credentials: 'include', 
+                    mode: 'cors',
+                    signal: controller.signal
                 });
+
+                clearTimeout(timeoutId);
 
                 if (!res.ok) {
                     throw new Error(`HTTP error! status: ${res.status}`);
@@ -121,9 +129,18 @@
                 const msgShown = `${content} - ${data.message} \n ${data.status == 'success' ? `Ticket Type: ${data.data[1]}` : ''}`;
                 alert(msgShown);
             } catch (error) {
+
                 console.error("Scan processing error:", error);
+
                 if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-                    alert("Network error! Please check your internet connection. " + error.message);
+                    // More detailed network error handling
+                    if (error.name === 'AbortError') {
+                        alert("Request timed out. Please check your internet connection and try again.");
+                    } else if (!navigator.onLine) {
+                        alert("You are offline. Please check your internet connection.");
+                    } else {
+                        alert("Network error! Unable to reach the server. Please check if the server is accessible.");
+                    }
                 } else {
                     alert("Error processing QR code. Please try again. " + error.message);
                 }
