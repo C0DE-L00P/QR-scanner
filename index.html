@@ -13,6 +13,32 @@
         <p id="message"></p>
         <p id="data"></p>
     </div>
+    <style>
+        #reader {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        #reader button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        #reader select {
+            padding: 8px;
+            margin: 4px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+    </style>
     
     <div id="reader"></div>
 
@@ -21,8 +47,9 @@
             "reader", // Changed from "preview" to "reader" to match the div id
             { 
                 fps: 10,
-                qrbox: {width: 250, height: 250},
-                aspectRatio: 1.0
+                qrbox: {width: 320, height: 320},
+                aspectRatio: 1.0,
+                disableFlip: true
             }
         );
 
@@ -33,8 +60,6 @@
         });
 
         async function handleScan(content) {
-            alert(content);
-            
             if(content.length !== 4) return;
         
             const URL = 'https://script.google.com/macros/s/AKfycbxh2fuXvJNhB4QtLWC7kniyD9GMsx7NEqG6unnxjbXP_gjxE0cNfE6QEmXzllJy9D8I/exec'
@@ -48,7 +73,8 @@
                 })
                 res = await res.json();
 
-                console.log('Response',res);
+                const msgShown = `${content} - ${res.message} \n ${res.status == 'success' ? JSON.stringify(res.data) : ''}`;
+                alert(msgShown);
 
                 document.getElementById('status').innerText = res.status;
                 document.getElementById('message').innerText = res.message;
