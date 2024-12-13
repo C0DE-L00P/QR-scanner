@@ -18,7 +18,9 @@
 
         Instascan.Camera.getCameras().then(cameras => {
             if (cameras.length > 0) {
-                scanner.start(cameras[0]);
+                // Use the back camera (usually cameras[1])
+                const backCamera = cameras[cameras.length - 1];
+                scanner.start(backCamera);
             } else {
                 alert('No cameras found');
             }
