@@ -67,12 +67,12 @@
         const html5QrcodeScanner = new Html5QrcodeScanner(
             "reader",
             { 
-                fps: 10,
+                fps: 2,
                 qrbox: {width: 320, height: 320},
                 aspectRatio: 1.0,
                 disableFlip: true,
                 showLandmarker: true,
-                facingMode: "environment"
+                facingMode: "environment",
             }
         );
 
@@ -92,7 +92,7 @@
                 scanner = html5QrcodeScanner.html5Qrcode;
             }
             // Pause scanning
-            scanner.pause(true);
+            if(scanner) scanner.pause(true);
 
             try {
                 await handleScan(decodedText);
@@ -100,12 +100,42 @@
                 console.error(error);
             } finally {
                 // Resume scanning after everything is done
-                scanner.resume();
+                if(scanner) scanner.resume();
                 isProcessing = false;
             }
         }, (error) => {
             console.error(error);
         });
+
+        // showAlert('test', {status: 'success', message: 'valid', data: ['test', 'test']});
+
+        function showAlert(content, res) {
+            const msgShown = `${content} - ${res.message + (res.message !== 'valid' ? '!!' : '')} \n${res.status == 'success' ? `Ticket Type: ${res.data[1]}` : ''}`;
+            
+            // Use a custom alert div instead of native alert
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert';
+            alertDiv.style.cssText = 'text-align: center; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(3); border-radius: 10px; border: none;  padding: 20px; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000;';
+            
+            const h6 = document.createElement('h4');
+            h6.textContent = `${content} - ${res.message + (res.message !== 'valid' ? '!!' : '')}`;
+            h6.style.fontSize = '1.2rem';
+            alertDiv.appendChild(h6);
+
+            if (res.status === 'success') {
+                const p = document.createElement('p');
+                p.textContent = `${res.data[1]}`;
+                p.style.fontSize = '1.4rem';
+                alertDiv.appendChild(p);
+            }
+
+            alertDiv.style.backgroundColor = res.status == 'success' ?  res.message == 'valid' ? '#4CAF50' : '#FFA500' : '#f44336';
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 8000);
+        }
 
         async function handleScan(content) {
             if(content.length !== 4) return;        
@@ -127,17 +157,7 @@
                     document.querySelector('.alert').remove();
                 }
                 
-                // Use a custom alert div instead of native alert
-                const alertDiv = document.createElement('div');
-                alertDiv.className = 'alert';
-                alertDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid black; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000;';
-                alertDiv.textContent = msgShown;
-                document.body.appendChild(alertDiv);
-                
-                // Remove alert after 3 seconds
-                setTimeout(() => {
-                    alertDiv.remove();
-                }, 3000);
+                showAlert(content, res);
             } catch (error) {
                 console.error(error);
             }
