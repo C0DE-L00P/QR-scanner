@@ -110,7 +110,7 @@
         // showAlert('test', {status: 'success', message: 'valid', data: ['test', 'test']});
 
         function showAlert(content, res) {
-            const msgShown = `${content} - ${res.message + (res.message !== 'valid' ? '!!' : '')} \n${res.status == 'success' ? `Ticket Type: ${res.data[1]}` : ''}`;
+            const msgShown = `${content} - ${res.message + (res.message !== 'Valid' ? '!!' : '')} \n${res.status == 'success' ? `Ticket Type: ${res.data[1]}` : ''}`;
             
             // Use a custom alert div instead of native alert
             const alertDiv = document.createElement('div');
@@ -118,7 +118,7 @@
             alertDiv.style.cssText = 'text-align: center; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(3); border-radius: 10px; border: none;  padding: 20px; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000;';
             
             const h6 = document.createElement('h4');
-            h6.textContent = `${content} - ${res.message + (res.message !== 'valid' ? '!!' : '')}`;
+            h6.textContent = `${content} - ${res.message + (res.message !== 'Valid' ? '!!' : '')}`;
             h6.style.fontSize = '1.2rem';
             alertDiv.appendChild(h6);
 
@@ -129,7 +129,7 @@
                 alertDiv.appendChild(p);
             }
 
-            alertDiv.style.backgroundColor = res.status == 'success' ?  res.message == 'valid' ? '#4CAF50' : '#FFA500' : '#f44336';
+            alertDiv.style.backgroundColor = res.status == 'success' ?  res.message == 'Valid' ? '#4CAF50' : '#FFA500' : '#f44336';
             document.body.appendChild(alertDiv);
             
             setTimeout(() => {
@@ -150,7 +150,7 @@
                 let res = await fetch(URL)
                 res = await res.json();
 
-                const msgShown = `${content} - ${res.message + (res.message !== 'valid' ? '!!' : '')} \n${res.status == 'success' ? `Ticket Type: ${res.data[1]}` : ''}`;
+                const msgShown = `${content} - ${res.message + (res.message !== 'Valid' ? '!!' : '')} \n${res.status == 'success' ? `Ticket Type: ${res.data[1]}` : ''}`;
                 
                 // Clear any existing alerts before showing new one
                 while (document.querySelector('.alert')) {
