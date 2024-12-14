@@ -127,6 +127,13 @@
                 p.textContent = `${res.data[1]}`;
                 p.style.fontSize = '1.4rem';
                 alertDiv.appendChild(p);
+                
+                if(res.data[2] !== 'null') {
+                    const p2 = document.createElement('span');
+                    p2.textContent = `Table ${res.data[2]}`;
+                    p2.style.fontSize = '1.2rem';
+                    alertDiv.appendChild(p2);
+                }
             }
 
             alertDiv.style.backgroundColor = res.status == 'success' ?  res.message == 'Valid' ? '#4CAF50' : '#FFA500' : '#f44336';
